@@ -53,19 +53,6 @@ Route.post(
 
 /** OTP Routes */
 
-/** email otp routes */
-Route.post(
-  "/user/email/send-otp",
-  UserAuthRequest.postEmailOtp(),
-  UserAuthController.sendEmailOtp
-);
-Route.post(
-  "/user/email/verify-otp",
-  UserAuthRequest.postVerifyEmailOtp(),
-  UserAuthController.verifyEmailOtp
-);
-/** END email otp routes */
-
 /** Register otp routes */
 Route.post(
   "/user/register/send-otp",
@@ -80,6 +67,27 @@ Route.post(
 );
 /** END Register otp routes */
 
+/** email otp routes */
+Route.post(
+  "/user/email/send-otp",
+  UserAuthRequest.postEmailOtp(),
+  UserAuthController.sendEmailOtp
+);
+Route.post(
+  "/user/email/verify-otp",
+  UserAuthRequest.postVerifyEmailOtp(),
+  UserAuthController.verifyEmailOtp
+);
+/** END email otp routes */
+
+/** Document upload Route */
+Route.post(
+  "/update/user",
+  UserAuthRequest.validateDocument(),
+  UserAuthController.uploadDocument
+);
+/** End Document upload Route */
+
 /** Login otp routes */
 Route.post(
   "/user/login/send-otp",
@@ -93,6 +101,18 @@ Route.post(
   UserAuthController.verifyLoginOtp
 );
 /** END Login otp routes */
+
+Route.post(
+  "/user/login/email/send-otp",
+  UserAuthRequest.postLoginEmailOtp(),
+  UserAuthController.sendLoginEmailOtp
+);
+
+Route.post(
+  "/user/login/email/verify-otp",
+  UserAuthRequest.postVerifyEmailOtp(),
+  UserAuthController.verifyEmailOtp
+);
 
 /** End OTP Routes */
 module.exports = Route;

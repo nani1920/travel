@@ -21,7 +21,7 @@ const UserModel = new Schema(
       default: null,
     },
     dob: {
-      type: Date,
+      type: String,
       default: null,
     },
     email: {
@@ -32,6 +32,10 @@ const UserModel = new Schema(
     //   type: String,
     //   default: null,
     // },
+    countryCode: {
+      type: String,
+      default: null,
+    },
     phone: {
       type: String,
       default: null,
@@ -56,12 +60,12 @@ const UserModel = new Schema(
       type: String,
       default: null,
     },
-    isEmailOtpVerified: {
-      type: String,
-      default: false,
-    },
+    // isEmailOtpVerified: {
+    //   type: String,
+    //   default: false,
+    // },
     isLoginOtpVerified: {
-      type: String,
+      type: Boolean,
       default: false,
     },
     userIdDocument: {

@@ -18,4 +18,8 @@ module.exports = class AuthResponse extends BaseResponse {
   verifyOtpResponse(data) {
     return this.okResponse(data);
   }
+
+  sendDocumentUploadResponse(data) {
+    return this.okResponse(data);
+  }
 };
