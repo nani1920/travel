@@ -37,12 +37,7 @@ class AuthRequest extends BaseRequest {
   }
 
   //Modified Here
-  otpMobileLogin() {
-    return [
-      bodyValidator("phone").notEmpty().withMessage("Phone No is Required"),
-      this.validate,
-    ];
-  }
+
   postEmailOtp() {
     return [
       bodyValidator("email").notEmpty().withMessage("Email is Required"),
