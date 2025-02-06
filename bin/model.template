@@ -1,0 +1,17 @@
+/* Third Party Libraries */
+const path = require('path');
+/* Third Party Libraries */
+
+/* Local Files */
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+/* Local Files */
+
+let {{modelName}}Model = new Schema({
+},{
+    timestamps: true
+});
+
+
+
+module.exports = mongoose.model("{{modelName}}", {{modelName}}Model);

@@ -1,0 +1,21 @@
+const faker = require('faker');
+faker.locale = 'en';
+require('dotenv').config()
+
+const getRandomInt = (max) => {
+    return Math.floor((Math.random() * Math.floor(max) / 5));
+}
+
+module.exports = async () => {
+
+    let data = [];
+
+    for (let index = 1; index < process.env.FACTORY_COUNT; index++) {
+        data.push({
+            // document name goes here 
+        });
+
+    }
+    return data;
+};
+

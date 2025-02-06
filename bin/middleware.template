@@ -1,0 +1,13 @@
+/* Third Party Libraries */
+/* Third Party Libraries */
+
+/* Local Files */
+/* Local Files */
+
+/* Controllers */
+/* End Controllers */
+
+class {{className}}Middleware {
+}
+
+module.exports = new {{className}}Middleware();

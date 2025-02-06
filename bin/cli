@@ -1,0 +1,197 @@
+const fs = require('fs');
+const program = require('commander');
+const chalk = require('chalk');
+const log = console.log;
+
+const CONTROLLER_NAMESPACE = 'http/controllers/';
+const CONTROLLER_SUFFIX = '.controller.js';
+const CONTROLLER_TEMPLATE = 'bin/controller.template';
+
+const MODEL_NAMESPACE = 'models/';
+const MODEL_SUFFIX = '.model.js';
+const MODEL_TEMPLATE = 'bin/model.template';
+
+
+const MIDDLEWARE_NAMESPACE = 'http/middlewares/';
+const MIDDLEWARE_SUFFIX = '.middleware.js';
+const MIDDLEWARE_TEMPLATE = 'bin/middleware.template';
+
+
+const HELPER_NAMESPACE = 'helpers/';
+const HELPER_SUFFIX = '.helper.js';
+const HELPER_TEMPLATE = 'bin/helper.template';
+
+
+const FACTORY_NAMESPACE = 'factories/';
+const FACTORY_SUFFIX = '.factory.js';
+const FACTORY_TEMPLATE = 'bin/factory.template';
+
+String.prototype.toTitleCase = function () {
+    return this.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1); });
+};
+
+
+const createController = (destination) => {
+    const filePath = CONTROLLER_NAMESPACE + destination;
+    const fullPath = filePath + CONTROLLER_SUFFIX;
+    fs.exists(fullPath, async (file) => {
+        if (!file) {
+            const directory = filePath.split('/');
+            let fileName = directory.pop();
+            if (directory.length > 1) {
+                await fs.promises.mkdir(directory.join('/'), { recursive: true })
+            }
+            let templateData = fs.readFileSync(CONTROLLER_TEMPLATE, { encoding: 'utf8' });
+            templateData = templateData.replace(/{{className}}/g, fileName.toTitleCase())
+            fs.writeFile(fullPath, templateData, (err) => {
+                if (err) throw err;
+                log(chalk.greenBright(`${fullPath} created successfully`));
+                process.exit(1);
+            });
+        } else {
+            log(chalk.red(`${fullPath} already exist`));
+            process.exit(1);
+        }
+    })
+}
+
+
+
+const createModel = (destination) => {
+    const filePath = MODEL_NAMESPACE + destination;
+    const fullPath = filePath + MODEL_SUFFIX;
+    fs.exists(fullPath, async (file) => {
+        if (!file) {
+            const directory = filePath.split('/');
+            let fileName = directory.pop();
+            if (directory.length > 1) {
+                await fs.promises.mkdir(directory.join('/'), { recursive: true })
+            }
+            let templateData = fs.readFileSync(MODEL_TEMPLATE, { encoding: 'utf8' });
+            templateData = templateData.replace(/{{modelName}}/g, fileName.toTitleCase())
+            fs.writeFile(fullPath, templateData, (err) => {
+                if (err) throw err;
+                log(chalk.greenBright(`${fullPath} created successfully`));
+                process.exit(1);
+            });
+        } else {
+            log(chalk.red(`${fullPath} already exist`));
+            process.exit(1);
+        }
+    })
+}
+
+const createMiddleware = (destination) => {
+    const filePath = MIDDLEWARE_NAMESPACE + destination;
+    const fullPath = filePath + MIDDLEWARE_SUFFIX;
+    fs.exists(fullPath, async (file) => {
+        if (!file) {
+            const directory = filePath.split('/');
+            let fileName = directory.pop();
+            if (directory.length > 1) {
+                await fs.promises.mkdir(directory.join('/'), { recursive: true })
+            }
+            let templateData = fs.readFileSync(MIDDLEWARE_TEMPLATE, { encoding: 'utf8' });
+            templateData = templateData.replace(/{{className}}/g, fileName.toTitleCase())
+            fs.writeFile(fullPath, templateData, (err) => {
+                if (err) throw err;
+                log(chalk.greenBright(`${fullPath} created successfully`));
+                process.exit(1);
+            });
+        } else {
+            log(chalk.red(`${fullPath} already exist`));
+            process.exit(1);
+        }
+    })
+}
+
+const createHelper = (destination) => {
+    const filePath = HELPER_NAMESPACE + destination;
+    const fullPath = filePath + HELPER_SUFFIX;
+    fs.exists(fullPath, async (file) => {
+        if (!file) {
+            const directory = filePath.split('/');
+            let fileName = directory.pop();
+            if (directory.length > 1) {
+                await fs.promises.mkdir(directory.join('/'), { recursive: true })
+            }
+            let templateData = fs.readFileSync(HELPER_TEMPLATE, { encoding: 'utf8' });
+            templateData = templateData.replace(/{{className}}/g, fileName.toTitleCase())
+            fs.writeFile(fullPath, templateData, (err) => {
+                if (err) throw err;
+                log(chalk.greenBright(`${fullPath} created successfully`));
+                process.exit(1);
+            });
+        } else {
+            log(chalk.red(`${fullPath} already exist`));
+            process.exit(1);
+        }
+    })
+}
+
+const createFactory = (destination) => {
+    const filePath = FACTORY_NAMESPACE + destination;
+    const fullPath = filePath + FACTORY_SUFFIX;
+    fs.exists(fullPath, async (file) => {
+        if (!file) {
+            const directory = filePath.split('/');
+            let fileName = directory.pop();
+            if (directory.length > 1) {
+                await fs.promises.mkdir(directory.join('/'), { recursive: true })
+            }
+            let templateData = fs.readFileSync(FACTORY_TEMPLATE, { encoding: 'utf8' });
+            fs.writeFile(fullPath, templateData, (err) => {
+                if (err) throw err;
+                log(chalk.greenBright(`${fullPath} created successfully`));
+                process.exit(1);
+            });
+        } else {
+            log(chalk.red(`${fullPath} already exist`));
+            process.exit(1);
+        }
+    })
+}
+
+
+try {
+    program
+        .version('0.1.0')
+        .command('gc <destination>')
+        .action(createController);
+
+    program
+        .version('0.1.0')
+        .command('gm <destination>')
+        .action(createModel);
+
+    program
+        .version('0.1.0')
+        .command('gmw <destination>')
+        .action(createMiddleware);
+
+    program
+        .version('0.1.0')
+        .command('gh <destination>')
+        .action(createHelper);
+
+    program
+        .version('0.1.0')
+        .command('gf <destination>')
+        .action(createFactory);
+} catch (e) {
+    log(chalk.redBright('Something went wrong', e));
+    process.exit(1);
+}
+
+
+program.on('--help', function () {
+    console.log('')
+    console.log('Help:');
+    console.log('  $ gc: generate controller');
+    console.log('  $ gm: generate model');
+    console.log('  $ gmw: generate middleware');
+    console.log('  $ gh: generate helper');
+    console.log('  $ gf: generate factory');
+});
+program.parse(process.argv);
+

@@ -1,0 +1,19 @@
+/* Third Party Libraries */
+const _ = require("lodash");
+const db = require('mongoose')
+const {
+    check,
+    validationResult
+} = require("express-validator");
+/* Third Party Libraries */
+
+/* Local Files */
+/* Local Files */
+
+/* Models */
+/* End Models */
+
+class {{className}}Controller {
+}
+
+module.exports = new {{className}}Controller();
