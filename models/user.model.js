@@ -20,14 +20,18 @@ const UserModel = new Schema(
       type: String,
       default: null,
     },
+    dob: {
+      type: Date,
+      default: null,
+    },
     email: {
       type: String,
       default: null,
     },
-    password: {
-      type: String,
-      default: null,
-    },
+    // password: {
+    //   type: String,
+    //   default: null,
+    // },
     phone: {
       type: String,
       default: null,

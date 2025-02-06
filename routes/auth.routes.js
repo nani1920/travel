@@ -69,28 +69,28 @@ Route.post(
 /** Register otp routes */
 Route.post(
   "/user/register/send-otp",
-  UserAuthRequest.postMobileOtp(),
-  UserAuthController.sendMobileOtp
+  UserAuthRequest.postRegisterOtp(),
+  UserAuthController.sendRegisterOtp
 );
 
 Route.post(
   "/user/register/verify-otp",
-  UserAuthRequest.postVerifyMobileOtp(),
-  UserAuthController.verifyMobileOtp
+  UserAuthRequest.postVerifyRegisterOtp(),
+  UserAuthController.verifyRegisterOtp
 );
 /** END Register otp routes */
 
 /** Login otp routes */
 Route.post(
   "/user/login/send-otp",
-  UserAuthRequest.postMobileOtp(),
-  UserAuthController.sendMobileOtp
+  UserAuthRequest.postLoginOtp(),
+  UserAuthController.sendLoginOtp
 );
 
 Route.post(
   "/user/login/verify-otp",
-  UserAuthRequest.postVerifyMobileOtp(),
-  UserAuthController.verifyMobileOtp
+  UserAuthRequest.postVerifyLoginOtp(),
+  UserAuthController.verifyLoginOtp
 );
 /** END Login otp routes */
 

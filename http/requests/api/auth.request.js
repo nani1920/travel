@@ -53,20 +53,54 @@ class AuthRequest extends BaseRequest {
     ];
   }
 
-  postMobileOtp() {
+  postRegisterOtp() {
     return [
-      bodyValidator("phone").notEmpty().withMessage("Phone is Required"),
+      bodyValidator("fullName").notEmpty().withMessage("Fullname is Required"),
+      bodyValidator("phone")
+        .notEmpty()
+        .withMessage("Phone is Required")
+        .isLength(10)
+        .withMessage("Invalid Phone Number"),
+      bodyValidator("dob").notEmpty().withMessage("DOB is Required"),
       this.validate,
     ];
   }
 
-  postVerifyMobileOtp() {
+  postVerifyRegisterOtp() {
     return [
-      bodyValidator("phone").notEmpty().withMessage("Phone is Required"),
+      bodyValidator("phone")
+        .notEmpty()
+        .withMessage("Phone is Required")
+        .isLength(10)
+        .withMessage("Invalid Phone Number"),
       bodyValidator("otp").notEmpty().withMessage("OTP is Required"),
       this.validate,
     ];
   }
+
+  postLoginOtp() {
+    return [
+      bodyValidator("phone")
+        .notEmpty()
+        .withMessage("Phone is Required")
+        .isLength(10)
+        .withMessage("Invalid Phone Number"),
+      this.validate,
+    ];
+  }
+
+  postVerifyLoginOtp() {
+    return [
+      bodyValidator("phone")
+        .notEmpty()
+        .withMessage("Phone is Required")
+        .isLength(10)
+        .withMessage("Invalid Phone Number"),
+      bodyValidator("otp").notEmpty().withMessage("OTP is Required"),
+      this.validate,
+    ];
+  }
+
   // end of Modification
 }
 
