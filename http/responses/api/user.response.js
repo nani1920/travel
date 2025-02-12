@@ -10,4 +10,8 @@ module.exports = class UserResponse extends BaseResponse {
   sendDocumentUploadResponse(data) {
     return this.okResponse(data);
   }
+
+  sendCategoriesResponse(data) {
+    return this.okResponse(data);
+  }
 };

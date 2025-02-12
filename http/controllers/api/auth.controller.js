@@ -62,6 +62,7 @@ class AuthController extends BaseController {
     try {
       const { email, password } = req.body;
       const user = await this._userRepository.findOne({ email });
+      console.log(user);
       if (!user) {
         throw new BadRequestError("Invalid Credentials");
       }
@@ -230,6 +231,7 @@ class AuthController extends BaseController {
 
       let user = await this._userRepository.createOrUpdateById(userId, {
         userIdDocument: studentIdDocument,
+        isLoginOtpVerified: true,
       });
 
       if (!user) {
@@ -322,7 +324,6 @@ class AuthController extends BaseController {
       const { email } = req.body;
 
       const isEmailExist = await this._userRepository.findOne({ email });
-
       // console.log(isEmailExist);
       // console.log(isEmailExist.isLoginOtpVerified);
       // console.log(!isEmailExist || !isEmailExist.isLoginOtpVerified);

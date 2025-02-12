@@ -22,7 +22,7 @@ class ApiMiddleware {
       if (!user) {
         throw new Error(req.t("unauthorized"));
       }
-      if (!user.isLoginOtpVerified && !user.isEmailOtpVerified) {
+      if (!user.isLoginOtpVerified) {
         throw new Error(req.t("user_is_not_verified"));
       }
       req.user = user;

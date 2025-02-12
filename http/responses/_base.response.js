@@ -46,7 +46,7 @@ module.exports = class BaseResponse {
   }
 
   okResponse(data) {
-    console.log(data);
+    // console.log(data);
     const response = this._schema({
       status: STATUS_CODES.OK,
       statusText: REASON_PHRASES.OK,
