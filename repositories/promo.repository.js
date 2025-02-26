@@ -1,9 +1,9 @@
 /** @format */
 
 const BaseRepository = require("./_base.repository.js");
-const CategoryModel = require("../models/category.model");
+const PromoModel = require("../models/promo.model");
 
-module.exports = class CategoryRepository extends BaseRepository {
+module.exports = class PromoRepository extends BaseRepository {
   constructor() {
     super();
   }
@@ -15,7 +15,7 @@ module.exports = class CategoryRepository extends BaseRepository {
     sort = { createdAt: -1 },
     limit = null
   ) {
-    return CategoryModel.find(query)
+    return PromoModel.find(query)
       .select(select)
       .populate(populate)
       .sort(sort)
@@ -23,38 +23,40 @@ module.exports = class CategoryRepository extends BaseRepository {
   }
 
   async findById(id) {
-    return CategoryModel.findById(id);
+    return PromoModel.findById(id);
   }
 
   async findOne(query, select = null) {
-    return CategoryModel.findOne(query).select(select);
+    return PromoModel.findOne(query).select(select);
   }
 
   async createOrUpdateById(id, data) {
     if (id) {
-      return CategoryModel.findByIdAndUpdate(
+      return PromoModel.findByIdAndUpdate(
         id,
         { ...data },
         { new: true }
       ).session(this._session);
     }
-    return await new CategoryModel(data).save({ session: this._session });
+    return await new PromoModel(data).save({ session: this._session });
   }
 
   getModelRef() {
-    return CategoryModel;
+    return PromoModel;
   }
 
   async getAll(paginator) {
     const pipeline = [];
     return this.paginate({
-      model: CategoryModel,
+      model: PromoModel,
+      sort: paginator.sort,
       aggregation: pipeline,
       pageNumber: paginator.page,
-      pageSize: paginator.size,
-      sort: paginator.sort,
+      pageSize: paginator.pageSize,
       filters: paginator.filters,
       lookup: paginator.lookup || [],
+      project: paginator.project,
+      addFields: paginator.addFields,
     });
   }
 };

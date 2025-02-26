@@ -22,8 +22,8 @@ module.exports = class VendorRepository extends BaseRepository {
       .limit(limit);
   }
 
-  async findById(id) {
-    return VendorModel.findById(id);
+  async findById(id, select = null) {
+    return VendorModel.findById(id).select(select);
   }
 
   async findOne(query, select = null) {
@@ -49,11 +49,18 @@ module.exports = class VendorRepository extends BaseRepository {
     const pipeline = [];
     return this.paginate({
       model: VendorModel,
+      sort: paginator.sort,
       aggregation: pipeline,
       pageNumber: paginator.page,
-      sort: paginator.sort,
+      pageSize: paginator.pageSize,
       filters: paginator.filters,
       lookup: paginator.lookup || [],
+      project: paginator.project,
+      addFields: paginator.addFields,
     });
+  }
+
+  async aggregation(aggregate = null) {
+    return VendorModel.aggregate(aggregate);
   }
 };

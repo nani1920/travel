@@ -3,7 +3,26 @@
 const ValidationResponse = require("../responses/validation.response");
 const { validationResult } = require("express-validator");
 
+const repositories = require("../../repositories");
+const _ = require("lodash");
 module.exports = class BaseRequest {
+  // use the repositories in constructor
+  constructor() {
+    this._adminRepository = new repositories.AdminRepository();
+    this._userRepository = new repositories.UserRepository();
+    this._tripRepository = new repositories.TripRepository();
+    this._activityRepository = new repositories.ActivityRepository();
+    this._amenityRepository = new repositories.AmenityRepository();
+    this._roleRepository = new repositories.RoleRepository();
+    this._permissionRepository = new repositories.PermissionRepository();
+    this._categoryRepository = new repositories.CategoryRepository();
+    this._productRepository = new repositories.ProductRepository();
+    this._vendorRepository = new repositories.VendorRepository();
+    this._subCategoryRepository = new repositories.SubCategoryRepository();
+    this._promoRepository = new repositories.PromoRepository();
+    this._RatingRepository = new repositories.RatingRepository();
+  }
+
   validate(req, res, next) {
     const messages = [];
     if (!validationResult(req).isEmpty()) {

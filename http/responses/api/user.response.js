@@ -7,11 +7,31 @@ module.exports = class UserResponse extends BaseResponse {
     super(req, res);
   }
 
-  sendDocumentUploadResponse(data) {
+  uploadDocumentResponse(data) {
     return this.okResponse(data);
   }
 
-  sendCategoriesResponse(data) {
+  getCategoriesResponse(data) {
+    return this.okResponse(data);
+  }
+
+  updateProfileResponse(data) {
+    return this.okResponse(data);
+  }
+
+  getVendorsResponse(data) {
+    return this.okResponse(data);
+  }
+
+  getVendorResponse(data) {
+    return this.okResponse(data);
+  }
+
+  getReviewsResponse(data) {
+    return this.okResponse(data);
+  }
+
+  postReviewResponse(data) {
     return this.okResponse(data);
   }
 };

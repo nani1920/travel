@@ -11,4 +11,7 @@ module.exports = {
   CategoryRepository: require("./category.repository"),
   ProductRepository: require("./product.repository"),
   VendorRepository: require("./vendor.repository"),
+  SubCategoryRepository: require("./subCategory.repository"),
+  PromoRepository: require("./promo.repository"),
+  RatingRepository: require("./rating.repository"),
 };

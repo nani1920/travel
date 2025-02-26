@@ -81,38 +81,21 @@ class AuthController extends BaseController {
   sendEmailOtp = async (req, res) => {
     const response = new AuthResponse(req, res);
     try {
-      const { email, userId } = req.body;
-      let isUserExist = await this._userRepository.findById(userId);
-      if (!isUserExist) {
-        throw new BadRequestError("UserId Doesn't Exist");
-      }
-      let isEmailExist = await this._userRepository.find({ email });
-      // console.log(isEmailExist);
-      // console.log(isEmailExist.length);
-      // console.log(isEmailExist[0]._id);
-      // console.log(isUserExist._id);
-      // console.log(isEmailExist[0]._id !== isUserExist._id);
-      if (
-        isEmailExist.length >= 1 &&
-        !isEmailExist[0]._id.equals(isUserExist._id)
-      ) {
-        throw new BadRequestError("Email is already Taken");
-      }
+      // const { email, userId } = req.body;
+      let { user, email } = req;
+
       const OTP = Helper.generateOTP(1000, 9999);
-      const id = isUserExist._id;
-      console.log(id);
+      const id = user._id;
+
       const data = {
         twoFaCode: OTP.toString(),
         // isEmailOtpVerified: false,
         email,
       };
-      const user = await this._userRepository.createOrUpdateById(id, data);
+      user = await this._userRepository.createOrUpdateById(id, data);
       // await Helper.sendEmailOTP(OTP, email);
       console.log(user);
-      return response.sendOtpResponse({
-        message: "OTP sent successfully",
-        OTP,
-      });
+      return response.sendEmailOtpResponse(OTP);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -125,24 +108,16 @@ class AuthController extends BaseController {
     const response = new AuthResponse(req, res);
     try {
       const { email, otp } = req.body;
-      let user = await this._userRepository.findOne({
-        email: email,
-      });
-      if (!user) {
-        throw new BadRequestError("Email Doesn't Exist");
-      }
+      let { user } = req;
+
       if (user.twoFaCode !== otp.toString()) {
         throw new BadRequestError("OTP Doesn't Match");
       }
       user = await this._userRepository.createOrUpdateById(user._id, {
         isLoginOtpVerified: true,
       });
-      // console.log(user);
       const { token } = _.pick(user.tokens[0], "token");
-      return response.verifyOtpResponse({
-        message: "OTP verified Successfully",
-        token,
-      });
+      return response.verifyEmailOtpResponse(token);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -155,18 +130,8 @@ class AuthController extends BaseController {
     const response = new AuthResponse(req, res);
     try {
       let body = _.pick(req.body, ["fullName", "phone", "dob", "countryCode"]);
-      let isUserExist = await this._userRepository.findOne({
-        phone: body.phone,
-      });
-      // is phone otp verified
-      // console.log(body);
-      // let parts = body.dob.split("-");
-      // body.dob = new Date(parts[2], parts[1] - 1, parts[0]);
-      // console.log(body.dob.toLocaleDateString());
-      // console.log(isUserExist.isLoginOtpVerified);
-      if (isUserExist && !isUserExist.isLoginOtpVerified) {
-        throw new BadRequestError("User already Exist,Please Login");
-      }
+      let { user } = req;
+
       const OTP = Helper.generateOTP(1000, 9999);
       const data = {
         twoFaCode: OTP.toString(),
@@ -174,14 +139,10 @@ class AuthController extends BaseController {
         ...body,
       };
 
-      const userId = isUserExist ? isUserExist._id : null;
-
-      let user = await this._userRepository.createOrUpdateById(userId, data);
-      console.log(user);
-      return response.sendOtpResponse({
-        message: "OTP sent successfully",
-        OTP,
-      });
+      const userId = user ? user._id : null;
+      user = await this._userRepository.createOrUpdateById(userId, data);
+      // console.log(user);
+      return response.sendRegisterOtpResponse(OTP);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -193,16 +154,9 @@ class AuthController extends BaseController {
   verifyRegisterOtp = async (req, res) => {
     const response = new AuthResponse(req, res);
     try {
-      const { phone, otp } = req.body;
-      let user = await this._userRepository.findOne({
-        phone: phone,
-      });
-      if (!user) {
-        throw new BadRequestError("Phone Doesn't Exist");
-      }
-      console.log(user);
-      console.log(user.twoFaCode);
-      console.log(otp);
+      const { otp } = req.body;
+      let { user } = req;
+
       console.log(user.twoFaCode !== otp.toString());
       if (user.twoFaCode !== otp.toString()) {
         throw new BadRequestError("OTP Doesn't Match");
@@ -212,10 +166,7 @@ class AuthController extends BaseController {
       // });
       user = _.pick(user.toObject(), ["_id"]);
 
-      return response.verifyOtpResponse({
-        message: "OTP verified Successfully",
-        user,
-      });
+      return response.verifyRegisterOtpResponse(user);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -228,18 +179,15 @@ class AuthController extends BaseController {
     const response = new AuthResponse(req, res);
     try {
       const { studentIdDocument, userId } = req.body;
+      let { user } = req;
 
-      let user = await this._userRepository.createOrUpdateById(userId, {
+      user = await this._userRepository.createOrUpdateById(user._id, {
         userIdDocument: studentIdDocument,
         isLoginOtpVerified: true,
       });
 
-      if (!user) {
-        throw new BadRequestError("UserId Doesn't Exist");
-      }
-
       const userData = _.pick(user, ["tokens"]);
-      return response.sendDocumentUploadResponse({
+      return response.uploadDocumentResponse({
         message: "Document Uploaded Successfully",
         userData,
       });
@@ -254,33 +202,17 @@ class AuthController extends BaseController {
   sendLoginOtp = async (req, res) => {
     const response = new AuthResponse(req, res);
     try {
-      const { phone } = req.body;
-      let isUserExist = await this._userRepository.findOne({
-        phone: phone,
-      });
-      if (!isUserExist) {
-        throw new BadRequestError("User Doesn't Exist,Please Register");
-      }
-      console.log(isUserExist.isLoginOtpVerified);
-      // console.log(!isUserExist);
-      // console.log(!isUserExist || isUserExist.isLoginOtpVerified);
-
-      if (!isUserExist.isLoginOtpVerified) {
-        throw new BadRequestError("User Doesn't Exist,Please Register");
-      }
+      let { user } = req;
 
       const OTP = Helper.generateOTP(1000, 9999);
-      const id = isUserExist._id;
+      const id = user._id;
       const data = {
         twoFaCode: OTP.toString(),
         // isLoginOtpVerified: false,
       };
-      let user = await this._userRepository.createOrUpdateById(id, data);
+      user = await this._userRepository.createOrUpdateById(id, data);
       console.log(user);
-      return response.sendOtpResponse({
-        message: "OTP sent successfully",
-        OTP,
-      });
+      return response.sendLoginOtpResponse(OTP);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -293,12 +225,8 @@ class AuthController extends BaseController {
     const response = new AuthResponse(req, res);
     try {
       const { phone, otp } = req.body;
-      let user = await this._userRepository.findOne({
-        phone: phone,
-      });
-      if (!user) {
-        throw new BadRequestError("Phone Doesn't Exist");
-      }
+      let { user } = req;
+
       if (user.twoFaCode !== otp.toString()) {
         throw new BadRequestError("OTP Doesn't Match");
       }
@@ -306,10 +234,7 @@ class AuthController extends BaseController {
       //   isLoginOtpVerified: true,
       // });
       user = _.pick(user.toObject(), ["tokens"]);
-      return response.verifyOtpResponse({
-        message: "OTP verified Successfully",
-        user,
-      });
+      return response.verifyLoginOtpResponse(user);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -322,29 +247,18 @@ class AuthController extends BaseController {
     const response = new AuthResponse(req, res);
     try {
       const { email } = req.body;
+      let { user } = req;
 
-      const isEmailExist = await this._userRepository.findOne({ email });
-      // console.log(isEmailExist);
-      // console.log(isEmailExist.isLoginOtpVerified);
-      // console.log(!isEmailExist || !isEmailExist.isLoginOtpVerified);
-      if (!isEmailExist) {
-        throw new BadRequestError("Email Doesn't Exist, Please Register");
-      }
-
-      if (!isEmailExist.isLoginOtpVerified) {
-        throw new BadRequestError("Email Doesn't Exist, Please Register");
-      }
       const OTP = Helper.generateOTP(1000, 9999);
-      const id = isEmailExist._id;
-      // console.log(id);
+      const id = user._id;
       const data = {
         twoFaCode: OTP.toString(),
         // isEmailOtpVerified: false,
       };
-      const user = await this._userRepository.createOrUpdateById(id, data);
+      user = await this._userRepository.createOrUpdateById(id, data);
       // await Helper.sendEmailOTP(OTP, email);
       // console.log(user);
-      return response.sendOtpResponse({
+      return response.sendLoginEmailOtpResponse({
         message: "OTP sent successfully",
         OTP,
       });

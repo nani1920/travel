@@ -10,6 +10,7 @@ const _ = require("lodash");
 const db = require("mongoose");
 const moment = require("moment");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 /* Third Party Libraries */
 
 /* Local Files */
@@ -27,6 +28,7 @@ const BadRequestError = require("../../../exceptions/badRequest.exception");
 /* End Responses */
 
 const CategoryModel = require("../../../models/category.model");
+const SubCategoryModel = require("../../../models/subCategory.model");
 
 class CategoryController extends BaseController {
   constructor() {
@@ -36,11 +38,37 @@ class CategoryController extends BaseController {
   getCategories = async (req, res) => {
     const response = new UserResponse(req, res);
     try {
-      let categories = await this._categoryRepository.find();
-      if (categories.length === 0) {
-        throw new BadRequestError("No Categories Found");
+      const { categoryId } = req.params;
+      const { pageNo, pageSize } = req.query;
+      const filters = {};
+      if (categoryId) {
+        filters["match"] = { categoryId: mongoose.Types.ObjectId(categoryId) };
+        const paginator = {
+          page: pageNo,
+          size: pageSize,
+          filters,
+        };
+        const subCategories = await this._subCategoryRepository.getAll(
+          paginator
+        );
+        return response.getCategoriesResponse(subCategories);
       }
-      return response.sendCategoriesResponse(categories);
+      const paginator = {
+        page: pageNo,
+        size: pageSize,
+        lookup: [
+          {
+            $lookup: {
+              from: "subcategories",
+              localField: "_id",
+              foreignField: "categoryId",
+              as: "SubCategories",
+            },
+          },
+        ],
+      };
+      let categories = await this._categoryRepository.getAll(paginator);
+      return response.getCategoriesResponse(categories);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);

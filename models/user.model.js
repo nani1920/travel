@@ -44,6 +44,10 @@ const UserModel = new Schema(
       type: String,
       default: null,
     },
+    language: {
+      type: String,
+      default: "en",
+    },
     tokens: [
       {
         access: {

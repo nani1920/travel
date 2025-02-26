@@ -11,15 +11,35 @@ module.exports = class AuthResponse extends BaseResponse {
     return this.okResponse(data);
   }
 
-  sendOtpResponse(data) {
+  uploadDocumentResponse(data) {
     return this.okResponse(data);
   }
 
-  verifyOtpResponse(data) {
+  sendEmailOtpResponse(data) {
     return this.okResponse(data);
   }
 
-  sendDocumentUploadResponse(data) {
+  verifyEmailOtpResponse(data) {
+    return this.okResponse(data);
+  }
+
+  sendRegisterOtpResponse(data) {
+    return this.okResponse(data);
+  }
+
+  verifyRegisterOtpResponse(data) {
+    return this.okResponse(data);
+  }
+
+  sendLoginOtpResponse(data) {
+    return this.okResponse(data);
+  }
+
+  verifyLoginOtpResponse(data) {
+    return this.okResponse(data);
+  }
+
+  sendLoginEmailOtpResponse(data) {
     return this.okResponse(data);
   }
 };

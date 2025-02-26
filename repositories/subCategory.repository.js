@@ -1,9 +1,9 @@
 /** @format */
 
 const BaseRepository = require("./_base.repository.js");
-const CategoryModel = require("../models/category.model");
+const SubCategoryModel = require("../models/subCategory.model");
 
-module.exports = class CategoryRepository extends BaseRepository {
+module.exports = class SubCategoryRepository extends BaseRepository {
   constructor() {
     super();
   }
@@ -15,7 +15,7 @@ module.exports = class CategoryRepository extends BaseRepository {
     sort = { createdAt: -1 },
     limit = null
   ) {
-    return CategoryModel.find(query)
+    return SubCategoryModel.find(query)
       .select(select)
       .populate(populate)
       .sort(sort)
@@ -23,32 +23,33 @@ module.exports = class CategoryRepository extends BaseRepository {
   }
 
   async findById(id) {
-    return CategoryModel.findById(id);
+    return SubCategoryModel.findById(id);
   }
 
   async findOne(query, select = null) {
-    return CategoryModel.findOne(query).select(select);
+    return SubCategoryModel.findOne(query).select(select);
   }
 
   async createOrUpdateById(id, data) {
     if (id) {
-      return CategoryModel.findByIdAndUpdate(
+      return SubCategoryModel.findByIdAndUpdate(
         id,
         { ...data },
         { new: true }
       ).session(this._session);
     }
-    return await new CategoryModel(data).save({ session: this._session });
+    return await new SubCategoryModel(data).save({ session: this._session });
   }
 
   getModelRef() {
-    return CategoryModel;
+    return SubCategoryModel;
   }
 
   async getAll(paginator) {
     const pipeline = [];
+    console.log(paginator);
     return this.paginate({
-      model: CategoryModel,
+      model: SubCategoryModel,
       aggregation: pipeline,
       pageNumber: paginator.page,
       pageSize: paginator.size,
