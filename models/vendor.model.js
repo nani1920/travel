@@ -68,14 +68,15 @@ const VendorModel = new Schema(
       type: Boolean,
       default: false,
     },
-    location: {
-      latitude: {
+    locations: {
+      type: {
         type: String,
-        default: null,
+        enum: ["Point"],
+        default: "Point",
       },
-      longitude: {
-        type: String,
-        default: null,
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0.0, 0.0],
       },
     },
     phone: {
@@ -89,6 +90,12 @@ const VendorModel = new Schema(
     totalReviews: {
       type: Number,
       default: 0,
+    },
+    pin: {
+      type: Number,
+      default: 1234, // change this value default to null
+      minlength: 4,
+      maxlength: 4,
     },
     // reviews: [
     //   {
@@ -128,4 +135,5 @@ const VendorModel = new Schema(
   }
 );
 
+VendorModel.index({ locations: "2dsphere" });
 module.exports = mongoose.model("Vendor", VendorModel);

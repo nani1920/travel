@@ -106,4 +106,22 @@ Route.post(
 );
 /** End Reviews Routes */
 
+/** transactionHistory Routes */
+Route.post(
+  "/redeem-offer",
+  UserRequest.postRedeemOfferRequest(),
+  UserController.postRedeemOffer
+);
+Route.get("/redemptions", UserController.getRedemptions);
+/** END transactionHistory Routes */
+
+/** nearVendors Route */
+Route.get(
+  "/near-vendors",
+  UserRequest.getNearVendorsRequest(),
+  UserController.getNearVendors
+);
+
+/** END nearVendors Route */
+
 module.exports = Route;

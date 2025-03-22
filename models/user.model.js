@@ -76,6 +76,17 @@ const UserModel = new Schema(
       type: String,
       default: null,
     },
+    locations: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0.0, 0.0],
+      },
+    },
   },
   {
     timestamps: true,

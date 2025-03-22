@@ -22,9 +22,8 @@ module.exports = class BaseRepository {
   }) => {
     try {
       pageNumber = Number(pageNumber) || 1;
-      console.log(pageSize);
       pageSize = Number(pageSize) || 20;
-      console.log(pageSize);
+
       if (filters.hasOwnProperty("match")) {
         aggregation.unshift({
           $match: filters["match"],
@@ -35,6 +34,7 @@ module.exports = class BaseRepository {
           $group: filters["group"],
         });
       }
+
       if (filters.hasOwnProperty("geonear")) {
         aggregation.unshift({
           $geoNear: filters["geonear"],

@@ -18,6 +18,8 @@ module.exports = class BaseController {
     this._subCategoryRepository = new repositories.SubCategoryRepository();
     this._promoRepository = new repositories.PromoRepository();
     this._RatingRepository = new repositories.RatingRepository();
+    this._transactionHistoryRepository =
+      new repositories.TransactionHistoryRepository();
   }
 
   getRepository(name) {

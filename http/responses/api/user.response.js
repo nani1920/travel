@@ -34,4 +34,16 @@ module.exports = class UserResponse extends BaseResponse {
   postReviewResponse(data) {
     return this.okResponse(data);
   }
+
+  postRedeemOfferResponse(data) {
+    return this.okResponse(data);
+  }
+
+  getRedemptionsResponse(data) {
+    return this.okResponse(data);
+  }
+
+  getNearVendorsResponse(data) {
+    return this.okResponse(data);
+  }
 };

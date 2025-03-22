@@ -152,6 +152,7 @@ class VendorController extends BaseController {
         { _id: vendorId },
         select
       );
+
       const paginator = {
         page,
         pageSize,

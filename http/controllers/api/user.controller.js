@@ -25,6 +25,8 @@ const UserRequest = require("../../requests/api/user.request");
 /* Responses */
 const UserResponse = require("../../responses/api/user.response");
 const BadRequestError = require("../../../exceptions/badRequest.exception");
+const promoModel = require("../../../models/promo.model");
+const VendorModel = require("../../../models/vendor.model");
 /* End Responses */
 
 class UserController extends BaseController {
@@ -63,7 +65,13 @@ class UserController extends BaseController {
   getVendors = async (req, res) => {
     const response = new UserResponse(req, res);
     try {
-      const { isNew, isTrending, isTopBrand, subCategory } = req.query;
+      let { isNew, isTrending, isTopBrand, subCategory, page, pageSize } =
+        req.query;
+
+      if (pageSize > 100) {
+        pageSize = 100;
+      }
+
       const filteredQuery = {};
       if (isTrending === "true") {
         filteredQuery.isTrending = true;
@@ -79,15 +87,25 @@ class UserController extends BaseController {
         filteredQuery["subCategory.name"] = subCategory;
       }
 
-      const vendors = await this._vendorRepository.find(
-        filteredQuery,
-        null,
-        null,
-        { createdAt: -1 },
-        limit
-      );
+      // const vendors = await this._vendorRepository.find(
+      //   filteredQuery,
+      //   null,
+      //   null,
+      //   { createdAt: -1 },
+      //   limit
+      // );
 
-      return response.getVendorsResponse(vendors);
+      const paginator = {
+        pageSize: pageSize || limit,
+        page: page,
+        filters: {
+          match: filteredQuery,
+        },
+      };
+
+      const vendorlist = await this._vendorRepository.getAll(paginator);
+
+      return response.getVendorsResponse(vendorlist);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);
@@ -148,7 +166,10 @@ class UserController extends BaseController {
     const response = new UserResponse(req, res);
     try {
       const { vendorId } = req.params;
-      const { page, pageSize } = req.query;
+      let { page, pageSize } = req.query;
+      if (pageSize > 100) {
+        pageSize = 100;
+      }
       const paginator = {
         page,
         pageSize,
@@ -197,6 +218,130 @@ class UserController extends BaseController {
         body
       );
       response.postReviewResponse(review);
+    } catch (e) {
+      if (e instanceof BadRequestError) {
+        return response.badRequestResponse(e);
+      }
+      response.internalServerErrorResponse(e);
+    }
+  };
+
+  postRedeemOffer = async (req, res) => {
+    const response = new UserResponse(req, res);
+    try {
+      let { estimatedSavings, totalBill } = req.body;
+      const { Vendor, user, Promo } = req;
+      const newTransaction = {
+        userId: user._id,
+        vendorId: Vendor._id,
+        promoId: Promo._id,
+        estimatedSavingPrice: estimatedSavings,
+        totalBill,
+      };
+
+      await this._transactionHistoryRepository.createOrUpdateById(
+        null,
+        newTransaction
+      );
+
+      response.postRedeemOfferResponse("successfully redeemed offer");
+    } catch (e) {
+      if (e instanceof BadRequestError) {
+        return response.badRequestResponse(e);
+      }
+      response.internalServerErrorResponse(e);
+    }
+  };
+
+  getRedemptions = async (req, res) => {
+    const response = new UserResponse(req, res);
+    try {
+      let { user } = req;
+      let { page, pageSize } = req.query; // add pageSize limit to 100
+      if (pageSize > 100) {
+        pageSize = 100;
+      }
+      const paginator = {
+        page,
+        pageSize,
+        filters: {
+          match: {
+            userId: user._id,
+          },
+        },
+        lookup: [
+          {
+            $lookup: {
+              from: "vendors",
+              localField: "vendorId",
+              foreignField: "_id",
+              as: "vendorDetails",
+            },
+          },
+          {
+            $lookup: {
+              from: "promos",
+              localField: "promoId",
+              foreignField: "_id",
+              as: "promoDetails",
+            },
+          },
+        ],
+        project: {
+          "vendorDetails._id": 1,
+          "vendorDetails.name": 1,
+          "vendorDetails.brandLogo": 1,
+          estimatedSavingPrice: 1,
+          "promoDetails._id": 1,
+          "promoDetails.offerPercentage": 1,
+          totalBill: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      };
+      const transactionsList = await this._transactionHistoryRepository.getAll(
+        paginator
+      );
+      response.getRedemptionsResponse(transactionsList);
+    } catch (e) {
+      if (e instanceof BadRequestError) {
+        return response.badRequestResponse(e);
+      }
+      response.internalServerErrorResponse(e);
+    }
+  };
+
+  getNearVendors = async (req, res) => {
+    const response = new UserResponse(req, res);
+
+    try {
+      let { longitude, latitude, page, pageSize } = req.query;
+      const cods = [parseFloat(longitude), parseFloat(latitude)];
+
+      if (pageSize > 100) {
+        pageSize = 100;
+      }
+
+      const paginator = {
+        page,
+        pageSize,
+        filters: {
+          geonear: {
+            near: { type: "Point", coordinates: cods },
+            distanceField: "distance.calculated",
+            maxDistance: 10000,
+            includeLocs: "distance.location",
+          },
+        },
+        project: {
+          name: 1,
+          subCategory: 1,
+          brandLogo: 1,
+          distance: 1,
+        },
+      };
+      const vendorList = await this._vendorRepository.getAll(paginator);
+      response.getNearVendorsResponse(vendorList);
     } catch (e) {
       if (e instanceof BadRequestError) {
         return response.badRequestResponse(e);

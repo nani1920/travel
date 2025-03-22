@@ -14,4 +14,5 @@ module.exports = {
   SubCategoryRepository: require("./subCategory.repository"),
   PromoRepository: require("./promo.repository"),
   RatingRepository: require("./rating.repository"),
+  TransactionHistoryRepository: require("./transactionHistory.repository"),
 };

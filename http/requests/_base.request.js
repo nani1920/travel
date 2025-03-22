@@ -21,6 +21,8 @@ module.exports = class BaseRequest {
     this._subCategoryRepository = new repositories.SubCategoryRepository();
     this._promoRepository = new repositories.PromoRepository();
     this._RatingRepository = new repositories.RatingRepository();
+    this._transactionHistoryRepository =
+      new repositories.TransactionHistoryRepository();
   }
 
   validate(req, res, next) {
